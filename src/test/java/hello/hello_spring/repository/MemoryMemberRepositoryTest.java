@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.*;
 class MemoryMemberRepositoryTest {
     MemoryMemberRepository repository = new MemoryMemberRepository();
 
+
     // 메소드가 실행이 끝날때마다 AfterEach의 메소드가 실행됨. (콜백메소드)
     @AfterEach
     public void afterEach() {

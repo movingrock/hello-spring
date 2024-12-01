@@ -1,17 +1,30 @@
 package hello.hello_spring.service;
 
 import hello.hello_spring.domain.Member;
-import org.assertj.core.api.Assertions;
+import hello.hello_spring.repository.MemoryMemberRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MemberServiceTest {
 
-    MemberService memberService = new MemberService();
+    MemberService memberService;
+    MemoryMemberRepository memberRepository;
+
+    // Dependency Injection 의존성 주입
+    @BeforeEach
+    public void beforeEach() {
+        memberRepository = new MemoryMemberRepository();
+        memberService = new MemberService(memberRepository);
+    }
+
+    @AfterEach
+    public void afterEach() {
+        memberRepository.clearStore();
+    }
 
 
     // test는 한글로 적어도 됨. 빌드 될때 포함되지 않음.
@@ -39,16 +52,16 @@ class MemberServiceTest {
 
         // when
         memberService.join(member1);
-        memberService.join(member2);
 
         // then
-        try{
-            memberService.join(member2);
-            fail();
-        }catch(IllegalStateException e){
-            assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
-
-        }
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(member2));
+        assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+//        try{
+//            memberService.join(member2);
+//            org.junit.jupiter.api.Assertions.fail();
+//        }catch(IllegalStateException e){
+//            assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+//        }
     }
 
     @Test
